@@ -101,6 +101,20 @@ fn read_trimmed(path: &str) -> Option<String> {
         .map(|value| value.trim().to_string())
 }
 
+fn open_external(url: &str) {
+    if let Some(address) = url.strip_prefix("mailto:") {
+        let _ = Command::new("xdg-email").arg(address).spawn();
+    } else {
+        let _ = Command::new("xdg-open").arg(url).spawn();
+    }
+}
+
+fn external_link(ui: &mut egui::Ui, label: &str, url: &str) {
+    if ui.add(egui::Link::new(label)).clicked() {
+        open_external(url);
+    }
+}
+
 fn read_sensor(prefix: &str, suffix: &str) -> Option<f32> {
     let entries = fs::read_dir("/sys/class/hwmon").ok()?;
     for entry in entries.flatten() {
@@ -678,6 +692,7 @@ struct App {
     privileged_session: Option<PrivilegedSession>,
     animation_started: Instant,
     last_thermal_refresh: Instant,
+    show_author: bool,
 }
 
 impl App {
@@ -1002,7 +1017,62 @@ impl eframe::App for App {
                         .color(egui::Color32::from_rgb(145, 153, 170)),
                 );
             }
+            ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
+                if ui
+                    .add_sized(
+                        [180.0, 28.0],
+                        egui::Button::new(egui::RichText::new("Author · Efe Özkan").size(13.0)),
+                    )
+                    .clicked()
+                {
+                    self.show_author = true;
+                }
+            });
         });
+        if self.show_author {
+            egui::Window::new("About")
+                .open(&mut self.show_author)
+                .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+                .default_size(egui::vec2(420.0, 360.0))
+                .resizable(false)
+                .show(context, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.add_space(14.0);
+                        ui.heading("Lenovo Ideapad Manager");
+                        ui.add_space(4.0);
+                        ui.label("Linux hardware control application");
+                        ui.add_space(18.0);
+                        ui.separator();
+                        ui.add_space(16.0);
+                        ui.label(egui::RichText::new("Efe Özkan").strong().size(20.0));
+                        ui.label("Project author");
+                        ui.add_space(22.0);
+                        ui.label(egui::RichText::new("Website").strong());
+                        external_link(ui, "efeozkan.com.tr", "https://efeozkan.com.tr");
+                        ui.add_space(12.0);
+                        ui.label(egui::RichText::new("GitHub Repository").strong());
+                        external_link(
+                            ui,
+                            "github.com/Veucci/lenovo-ideapad-manager-linux",
+                            "https://github.com/Veucci/lenovo-ideapad-manager-linux",
+                        );
+                        ui.add_space(12.0);
+                        ui.label(egui::RichText::new("Email").strong());
+                        external_link(
+                            ui,
+                            "contact@efeozkan.com.tr",
+                            "mailto:contact@efeozkan.com.tr",
+                        );
+                        ui.add_space(12.0);
+                        ui.label(egui::RichText::new("License").strong());
+                        external_link(
+                            ui,
+                            "MIT License",
+                            "https://github.com/Veucci/lenovo-ideapad-manager-linux/blob/main/LICENSE",
+                        );
+                    });
+                });
+        }
         self.auto_apply();
     }
 }
@@ -1075,6 +1145,7 @@ fn main() -> eframe::Result<()> {
                 privileged_session: None,
                 animation_started: Instant::now(),
                 last_thermal_refresh: Instant::now(),
+                show_author: false,
             }))
         }),
     )

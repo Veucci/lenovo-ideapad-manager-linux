@@ -62,6 +62,10 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
 
+## License
+
+This project is available under the MIT License.
+
 ## Project
 
 [efeozkan.com.tr](https://efeozkan.com.tr)
