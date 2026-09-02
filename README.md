@@ -14,6 +14,16 @@ A Linux-only Lenovo Ideapad management application written in Rust.
 - Optional startup application
 - No application-level `unsafe` code
 
+## Screenshots
+
+### Keyboard Lighting
+
+![Keyboard Lighting](screenshots/SS-1.jpg)
+
+### Fan Control
+
+![Fan Control](screenshots/SS-2.jpg)
+
 ## Requirements
 
 - Linux
