@@ -23,6 +23,19 @@ A Linux-only Lenovo Ideapad management application written in Rust. The current 
 
 If USB access is denied, the application opens the desktop password dialog once and keeps a privileged helper active for later changes.
 
+## Install
+
+```sh
+cargo install --path . --locked
+~/.cargo/bin/lenovo-keyboard-light
+```
+
+If `~/.cargo/bin` is in your `PATH`, run it with:
+
+```sh
+lenovo-keyboard-light
+```
+
 ## Run
 
 ```sh
