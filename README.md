@@ -1,16 +1,17 @@
-# Lenovo Ideapad Fan and Keyboard Manager
+# Lenovo Ideapad Manager
 
-A Linux-only Lenovo Ideapad management application written in Rust. The current GUI provides keyboard lighting control for supported Lenovo devices.
+A Linux-only Lenovo Ideapad management application written in Rust.
 
 ## Features
 
-- Static, breath, wave, hue, and off lighting effects
-- Four keyboard zones with live preview
+- Keyboard lighting effects with four zones and live preview
 - HEX, RGB, and HSV color input
 - Brightness, speed, and wave direction controls
-- Automatic live apply while editing
-- Permanent settings with the `Apply` button
-- Optional root execution at system startup
+- Fan Control page with two animated fan visualizations
+- Four thermal profiles with immediate selection and persistence
+- Temperature and fan RPM monitoring when exposed by the system
+- Persistent privileged helper for keyboard and thermal changes
+- Optional startup application
 - No application-level `unsafe` code
 
 ## Requirements
@@ -20,20 +21,19 @@ A Linux-only Lenovo Ideapad management application written in Rust. The current 
 - libusb
 - pkexec with a desktop PolicyKit authentication agent
 - Supported Lenovo keyboard device: `048d:c963`
-
-If USB access is denied, the application opens the desktop password dialog once and keeps a privileged helper active for later changes.
+- ACPI platform profiles for thermal mode control
 
 ## Install
 
 ```sh
 cargo install --path . --locked
-~/.cargo/bin/lenovo-keyboard-light
+~/.cargo/bin/lenovo-ideapad-manager
 ```
 
-If `~/.cargo/bin` is in your `PATH`, run it with:
+If `~/.cargo/bin` is in your `PATH`, run:
 
 ```sh
-lenovo-keyboard-light
+lenovo-ideapad-manager
 ```
 
 ## Run
@@ -42,15 +42,15 @@ lenovo-keyboard-light
 cargo run --release
 ```
 
-Use `Apply` to save and apply the current configuration. Use `Save` to save without applying. Changes made in the GUI are applied immediately but are not saved until `Apply` or `Save` is pressed.
+Use the `Apply` button to save and apply keyboard settings. Fan profiles are applied and saved immediately when selected.
 
-Enable the startup checkbox to apply the saved configuration once when the desktop session starts. The user autostart entry is created at:
+The optional startup entry is created at:
 
 ```text
-~/.config/autostart/lenovo-keyboard-light.desktop
+~/.config/autostart/lenovo-ideapad-manager.desktop
 ```
 
-If needed, add a udev rule for non-root USB access:
+If USB access is denied, add a udev rule for the supported device:
 
 ```text
 /etc/udev/rules.d/10-kblight.rules
